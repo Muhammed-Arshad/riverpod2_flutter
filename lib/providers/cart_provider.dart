@@ -1,14 +1,15 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod2_flutter/models/product.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-class CartNotifier extends Notifier<Set<Product>>{
+part 'cart_provider.g.dart';
+
+@riverpod
+class CartNotifier extends _$CartNotifier{
 
   //initial value
   @override
   Set<Product> build() {
-    return const {
-      Product(title: "Denim jeans", price: 33, image: "image", id: '3')
-    };
+    return const {};
   }
 
   void addProduct(Product product){
@@ -22,9 +23,17 @@ class CartNotifier extends Notifier<Set<Product>>{
       state = state.where((p) => p.id != product.id).toSet();
     }
   }
-
 }
 
-final cartNotifierProvider = NotifierProvider<CartNotifier,Set<Product>>((){
-  return CartNotifier();
-});
+@riverpod
+int cartTotal(ref){
+  final cartProducts = ref.watch(cartNotifierProvider);
+
+  int total = 0;
+
+  for(Product product in cartProducts){
+    total += product.price;
+  }
+
+  return total;
+}
